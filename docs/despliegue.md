@@ -10,7 +10,7 @@ El diseño usa una imagen Docker para la interfaz/API, PostgreSQL externo y un p
 
 1. Elegir un servidor con Docker o una plataforma que ejecute contenedores. Crear una base PostgreSQL 17, con usuario propio, copias de seguridad y conexión restringida al servidor.
 2. Clonar el repositorio privado y elegir un commit verificado. No copiar `.git` ni secretos dentro de la imagen.
-3. Copiar `.env.production.example` a `.env.production` y completar la URL real de base, el puerto local y el nombre de imagen. Codificar caracteres especiales del usuario/password en la URL. Usar la configuración TLS y los certificados requeridos por el proveedor; no desactivar la verificación de certificados.
+3. Copiar `.env.production.example` a `.env.production` y completar la URL real de base, `APP_ORIGIN` con el dominio HTTPS público, el puerto local y el nombre de imagen. Codificar caracteres especiales del usuario/password en la URL. Usar la configuración TLS y los certificados requeridos por el proveedor; no desactivar la verificación de certificados.
 4. Configurar el proxy HTTPS y DNS. El puerto de la aplicación se publica sólo en `127.0.0.1`. `TRUST_PROXY=true` supone exactamente un proxy confiable: si la topología cambia, revisar esa opción.
 
 ## Publicar una versión
@@ -45,7 +45,8 @@ Las migraciones no tienen reversión automática. Si se vuelve a una imagen ante
 - Probar la restauración de una copia de seguridad y fijar su frecuencia y retención.
 - Configurar alertas de readiness, errores, espacio de base y vencimiento de certificados.
 - Guardar secretos fuera de Git y definir cómo se rotan.
-- Verificar cuentas, recuperación de contraseña, suscripciones y límite real del permiso offline.
+- Verificar cuentas y sesiones; completar verificación de correo y recuperación de contraseña olvidada, suscripciones y límite real del permiso offline.
+- Configurar el mantenimiento de sesiones/contadores con `npm run db:cleanup-auth:production`.
 - Revisar dependencias y procedencia/licencias de recursos antes de una distribución pública.
 
 El workflow de GitHub verifica tipos, pruebas, migraciones y la imagen con PostgreSQL de servidor. No despliega automáticamente, no crea infraestructura ni modifica cuentas de proveedores.

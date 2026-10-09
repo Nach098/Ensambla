@@ -4,6 +4,8 @@
 
 Usar Node 24 y `npm ci` desde la raíz; `package-lock.json` fija las dependencias. Copiar `.env.example` a `.env`. Iniciar PostgreSQL, ejecutar `npm run db:migrate` y luego `npm run dev`. La interfaz y la API se sirven desde http://localhost:3000.
 
+El registro, ingreso y los permisos reales se describen en `cuentas-y-permisos.md`; el recorrido por archivos está en `guia-del-codigo.md`.
+
 El flujo completo con Docker se encuentra en el README. Cambiar el password local también exige ajustar `DATABASE_URL`. Compose inicializa credenciales únicamente al crear el volumen; editarlas en `.env` no modifica un volumen existente.
 
 ## Cambios y verificaciones
@@ -11,6 +13,7 @@ El flujo completo con Docker se encuentra en el README. Cambiar el password loca
 Trabajar en ramas pequeñas y describir el comportamiento cambiado. Antes de integrar código:
 
 ```bash
+npm run format:check
 npm run check
 npm test
 npm run build
@@ -38,4 +41,4 @@ Un `503` en readiness suele indicar que no hay conexión, faltan migraciones o n
 
 La maqueta conserva HTML/CSS/JS y fotos locales. Los módulos se ejecutan como ESM nativo; abrir `index.html` con `file://` no funciona. Las fotos embebidas de `landing-photos.js` se conservan como estaban para evitar perder la solución de carga actual; el servidor nuevo también sirve correctamente WebP desde `assets/`.
 
-La configuración de negocio sigue siendo local hasta integrar la API. No ingresar datos sensibles ni cuentas reales en los formularios simulados. Una migración futura de datos locales deberá ser explícita, con vista previa y validación.
+La configuración de negocio sigue siendo local hasta integrar la API. Las cuentas son reales para este servidor; los formularios del constructor siguen siendo borradores locales. No cargar datos de clientes hasta implementar y verificar su persistencia y autorización. Una migración futura de datos locales deberá ser explícita, con vista previa y validación.

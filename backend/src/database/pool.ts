@@ -1,3 +1,4 @@
+/** Pool de conexiones PostgreSQL. Define límites y tiempos de espera sin exponer credenciales en los logs. */
 import pg from 'pg';
 
 export function createPool(databaseUrl: string): pg.Pool {

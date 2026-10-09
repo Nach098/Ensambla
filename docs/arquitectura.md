@@ -8,19 +8,19 @@ El navegador se comunica exclusivamente con `/api` del mismo origen. Las credenc
 
 ## Modelo inicial
 
-| Tabla | Responsabilidad |
-| --- | --- |
-| `users` | Identidad básica; `password_hash` queda reservado para autenticación futura. |
-| `workspaces` | Espacio del propietario; `owner_id` determina la propiedad. |
-| `workspace_members` | Colaboradores con rol editor o lector. |
-| `applications` | Aplicación, estado, revisión y definición de pantallas/bloques/reglas. |
-| `app_collections` | Tablas lógicas de cada aplicación y sus campos. |
-| `app_records` | Registros de cada tabla lógica, con datos JSONB y revisión. |
-| `schema_migrations` | Archivos SQL aplicados, fecha y checksum. |
+| Tabla               | Responsabilidad                                                        |
+| ------------------- | ---------------------------------------------------------------------- |
+| `users`             | Cuenta, perfil, hash de contraseña y estado de habilitación.           |
+| `workspaces`        | Espacio del propietario; `owner_id` determina la propiedad.            |
+| `workspace_members` | Colaboradores con rol editor o lector.                                 |
+| `applications`      | Aplicación, estado, revisión y definición de pantallas/bloques/reglas. |
+| `app_collections`   | Tablas lógicas de cada aplicación y sus campos.                        |
+| `app_records`       | Registros de cada tabla lógica, con datos JSONB y revisión.            |
+| `schema_migrations` | Archivos SQL aplicados, fecha y checksum.                              |
 
 `app_collections.fields` será la fuente de verdad para los campos. La definición de una aplicación referenciará las colecciones por identificador y contendrá presentación y reglas, sin duplicar sus registros. JSONB permite distintas estructuras por aplicación; la API deberá validar esos documentos según un esquema versionado. Un objeto JSON no equivale a datos ya validados.
 
-Las claves foráneas compuestas impiden que un registro se vincule a una colección de otro espacio. Esto no reemplaza la autorización: cada lectura y escritura deberá verificar el usuario, el espacio y el permiso. No hay endpoints de negocio habilitados mientras esa capa no exista.
+Las claves foráneas compuestas impiden que un registro se vincule a una colección de otro espacio. Esto no reemplaza la autorización: cada lectura y escritura deberá verificar el usuario, el espacio y el permiso. Los endpoints de cuentas y espacios tienen autorización real. Los endpoints de aplicaciones y registros aún están pendientes; no se habilitan sin la misma protección.
 
 ## Organización del backend al crecer
 
@@ -49,4 +49,4 @@ El diseño previsto es una autorización firmada por el servidor, de duración l
 
 Sin conexión no puede conocerse inmediatamente una revocación y no puede garantizarse inviolabilidad de un cliente controlado por el usuario. Si se necesita control estricto, determinadas operaciones deberán exigir conexión. Antes de implementar, definir qué se conserva en lectura/exportación al vencer, qué operaciones funcionan offline y cómo se sincronizan los cambios sin duplicar pedidos ni movimientos de stock.
 
-Las sesiones, invitaciones, auditoría, suscripciones, dispositivos, permisos firmados y cola de sincronización se añadirán con nuevas migraciones cuando se implementen; no hay tablas vacías simulando esos servicios.
+La migración `002_authentication.sql` incorpora sesiones y contadores de intentos. Invitaciones por correo, auditoría, suscripciones, dispositivos, permisos offline firmados y sincronización se añadirán con nuevas migraciones al implementarse.

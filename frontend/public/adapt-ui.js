@@ -1,58 +1,200 @@
-import {esc,icon,button} from './ui.js';
-import {taxonomyOptions,taxonomyLabel,operatorsFor,operatorLabels} from './adapt-domain.js';
-import {uid,validateRecord,collectionOptions} from './domain.js';
+/** Formularios de categorías y filtros. Conecta controles de la interfaz con las reglas de adaptación. */
+import { esc, icon, button } from './ui.js';
+import { taxonomyOptions, taxonomyLabel, operatorsFor, operatorLabels } from './adapt-domain.js';
+import { uid, validateRecord, collectionOptions } from './domain.js';
 
-export const scopeAttrs=scope=>`data-query-scope="${esc(scope.kind)}" data-collection="${esc(scope.collection)}" ${scope.block?`data-block="${esc(scope.block)}"`:''}`;
-export function updateClassification(form,c,parent){
-  const child=[...form.querySelectorAll('[data-classification-child]')].find(el=>el.dataset.collection===c.id);if(!child)return;
-  const old=child.value,opts=taxonomyOptions(c,c.fields.find(f=>f.key===c.taxonomy.subcategoryKey),parent||'__none__');
-  child.innerHTML='<option value="">Elegí una opción</option>'+opts.map(o=>`<option value="${esc(o.value)}">${esc(o.label)}</option>`).join('');
-  child.disabled=!parent;child.value=opts.some(o=>o.value===old)?old:'';return child;
+export const scopeAttrs = (scope) =>
+  `data-query-scope="${esc(scope.kind)}" data-collection="${esc(scope.collection)}" ${scope.block ? `data-block="${esc(scope.block)}"` : ''}`;
+export function updateClassification(form, c, parent) {
+  const child = [...form.querySelectorAll('[data-classification-child]')].find(
+    (el) => el.dataset.collection === c.id,
+  );
+  if (!child) return;
+  const old = child.value,
+    opts = taxonomyOptions(
+      c,
+      c.fields.find((f) => f.key === c.taxonomy.subcategoryKey),
+      parent || '__none__',
+    );
+  child.innerHTML =
+    '<option value="">Elegí una opción</option>' +
+    opts.map((o) => `<option value="${esc(o.value)}">${esc(o.label)}</option>`).join('');
+  child.disabled = !parent;
+  child.value = opts.some((o) => o.value === old) ? old : '';
+  return child;
 }
-export function readRecordForm(form,c,existing,fd=new FormData(form)){
-  const r={...existing,id:existing?.id||uid('row')};
-  for(const f of c.fields){
-    const control=[...form.querySelectorAll('[name]')].find(el=>el.name===f.key);
-    if(control?.disabled){if(f.key===c.taxonomy?.subcategoryKey)r[f.key]='';continue;}
-    if(!control){if(f.key==='status'&&c.id==='orders')r.status='Pendiente';else if(f.required&&!existing)throw new Error(`El formulario no muestra ${f.label}, que es obligatorio. Agregalo en la configuración.`);continue;}
-    r[f.key]=f.type==='boolean'?fd.has(f.key):f.type==='number'?(fd.get(f.key)===''?'':Number(fd.get(f.key))):String(fd.get(f.key)||'');
+export function readRecordForm(form, c, existing, fd = new FormData(form)) {
+  const r = { ...existing, id: existing?.id || uid('row') };
+  for (const f of c.fields) {
+    const control = [...form.querySelectorAll('[name]')].find((el) => el.name === f.key);
+    if (control?.disabled) {
+      if (f.key === c.taxonomy?.subcategoryKey) r[f.key] = '';
+      continue;
+    }
+    if (!control) {
+      if (f.key === 'status' && c.id === 'orders') r.status = 'Pendiente';
+      else if (f.required && !existing)
+        throw new Error(
+          `El formulario no muestra ${f.label}, que es obligatorio. Agregalo en la configuración.`,
+        );
+      continue;
+    }
+    r[f.key] =
+      f.type === 'boolean'
+        ? fd.has(f.key)
+        : f.type === 'number'
+          ? fd.get(f.key) === ''
+            ? ''
+            : Number(fd.get(f.key))
+          : String(fd.get(f.key) || '');
   }
-  return validateRecord(c,r);
+  return validateRecord(c, r);
 }
-export function filterDescription(c,rule,app){
-  const f=c.fields.find(f=>f.key===rule.field);return `${f?.label||'Campo'} ${operatorLabels[rule.op]||rule.op}${['empty','notempty'].includes(rule.op)?'':` ${f?.type==='boolean'?(String(rule.value)==='true'?'Sí':'No'):(f?.key==='product'&&c.id==='orders'&&app?app.recipes.find(r=>r.id===rule.value)?.name||rule.value:taxonomyLabel(c,rule.field,rule.value))}`}`;
+export function filterDescription(c, rule, app) {
+  const f = c.fields.find((f) => f.key === rule.field);
+  return `${f?.label || 'Campo'} ${operatorLabels[rule.op] || rule.op}${['empty', 'notempty'].includes(rule.op) ? '' : ` ${f?.type === 'boolean' ? (String(rule.value) === 'true' ? 'Sí' : 'No') : f?.key === 'product' && c.id === 'orders' && app ? app.recipes.find((r) => r.id === rule.value)?.name || rule.value : taxonomyLabel(c, rule.field, rule.value)}`}`;
 }
-export function filterChips(c,filters,scope,app){return filters.map((r,i)=>`<span class="query-chip">${esc(filterDescription(c,r,app))}<button type="button" data-action="remove-query-filter" ${scopeAttrs(scope)} data-index="${i}" aria-label="Quitar condición ${esc(filterDescription(c,r,app))}">${icon('close',13)}</button></span>`).join('');}
-export function filterBar(c,query={},scope,fields,baseFilters=[],app){
-  const filters=query.filters||[],t=c.taxonomy,parent=[...filters,...baseFilters].find(r=>r.field===t?.categoryKey&&r.op==='eq')?.value;
-  const quick=c.fields.filter(f=>['select','boolean'].includes(f.type)&&(!fields||fields.includes(f.key)));
-  return `<div class="query-bar" ${scopeAttrs(scope)}><div class="query-controls"><label class="query-search">${icon('search',17)}<input type="search" data-query-search ${scopeAttrs(scope)} value="${esc(query.search||'')}" placeholder="Buscar en ${esc(c.name)}" aria-label="Buscar en ${esc(c.name)}"></label>${quick.map(f=>{
-    const sub=f.key===t?.subcategoryKey,available=f.type==='boolean'?[{value:'true',label:'Sí'},{value:'false',label:'No'}]:taxonomyOptions(c,f,sub?(parent||'__none__'):undefined)||(app?collectionOptions(app,c,f):(f.options||[]).map(x=>({value:x,label:x}))),base=baseFilters.find(r=>r.field===f.key&&r.op==='eq'),options=base?available.filter(o=>String(o.value)===String(base.value)):available;
-    const value=filters.find(r=>r.field===f.key&&r.op==='eq')?.value||'';
-    return `<label class="query-select"><span>${esc(f.label)}</span><select data-query-field="${esc(f.key)}" ${scopeAttrs(scope)} ${sub&&!parent?'disabled':''}><option value="">${sub&&!parent?'Elegí una categoría':'Todos'}</option>${options.map(o=>`<option value="${esc(o.value)}" ${String(value)===String(o.value)?'selected':''}>${esc(o.label)}</option>`).join('')}</select></label>`;
-  }).join('')}<button type="button" class="btn btn-plain btn-small" data-action="more-filters" ${scopeAttrs(scope)}>${icon('settings',16)} Condiciones${filters.length?` <span class="query-count">${filters.length}</span>`:''}</button></div>${filters.length?`<div class="query-chips">${filterChips(c,filters,scope,app)}${button('Limpiar filtros','clear-query',scopeAttrs(scope)+' type="button"','text-link')}</div>`:''}</div>`;
+export function filterChips(c, filters, scope, app) {
+  return filters
+    .map(
+      (r, i) =>
+        `<span class="query-chip">${esc(filterDescription(c, r, app))}<button type="button" data-action="remove-query-filter" ${scopeAttrs(scope)} data-index="${i}" aria-label="Quitar condición ${esc(filterDescription(c, r, app))}">${icon('close', 13)}</button></span>`,
+    )
+    .join('');
 }
-export function groupEditor(group){return `<article class="taxonomy-group" data-group="${esc(group.id)}"><div class="taxonomy-group-heading"><span>${icon('layers',20)}</span><label>Nombre de la categoría<input data-category-name value="${esc(group.name)}" required maxlength="60" placeholder="Ej.: Insumos, Productos, Áreas"></label><button type="button" class="icon-button danger" data-action="remove-category" aria-label="Quitar categoría">${icon('trash',17)}</button></div><div class="taxonomy-children">${group.children.map(s=>childEditor(s)).join('')}</div><button type="button" class="text-link" data-action="add-subcategory">${icon('plus',15)} Agregar subcategoría</button></article>`;}
-export function childEditor(child){return `<div class="taxonomy-child" data-subcategory="${esc(child.id)}"><span class="taxonomy-branch" aria-hidden="true"></span><input data-subcategory-name value="${esc(child.name)}" required maxlength="60" placeholder="Nombre de la subcategoría" aria-label="Nombre de la subcategoría"><button type="button" class="icon-button danger" data-action="remove-subcategory" aria-label="Quitar subcategoría">${icon('close',16)}</button></div>`;}
-export function taxonomyModal(c,groups){
-  return `<span class="eyebrow">TU NEGOCIO TIENE SU PROPIO ORDEN</span><h2 id="modal-title">Categorías a tu manera.</h2><p class="modal-intro">Podés llamarlas “Familia y tipo”, “Área y equipo” o como te resulte natural. Cada subcategoría pertenece a una categoría.</p><form data-form="taxonomy" data-collection="${esc(c.id)}"><div class="form-grid taxonomy-levels"><label>Nombre del primer nivel<input name="categoryLabel" maxlength="60" required value="${esc(c.taxonomy?.categoryLabel||'Categoría')}"></label><label>Nombre del segundo nivel<input name="subcategoryLabel" maxlength="60" required value="${esc(c.taxonomy?.subcategoryLabel||'Subcategoría')}"></label></div><div class="taxonomy-groups">${groups.map(groupEditor).join('')}</div><button type="button" class="btn btn-plain btn-small" data-action="add-category">${icon('plus',17)} Otra categoría</button><p class="subtle-note">Se agregan dos campos a esta tabla. Los nombres se pueden cambiar; para quitar una opción en uso, primero reasigná sus registros y filtros.</p><div class="modal-actions"><button type="button" class="btn btn-plain" data-action="close-modal">Cancelar</button><button class="btn btn-dark" type="submit">Guardar categorías</button></div></form>`;
+export function filterBar(c, query = {}, scope, fields, baseFilters = [], app) {
+  const filters = query.filters || [],
+    t = c.taxonomy,
+    parent = [...filters, ...baseFilters].find(
+      (r) => r.field === t?.categoryKey && r.op === 'eq',
+    )?.value;
+  const quick = c.fields.filter(
+    (f) => ['select', 'boolean'].includes(f.type) && (!fields || fields.includes(f.key)),
+  );
+  return `<div class="query-bar" ${scopeAttrs(scope)}><div class="query-controls"><label class="query-search">${icon('search', 17)}<input type="search" data-query-search ${scopeAttrs(scope)} value="${esc(query.search || '')}" placeholder="Buscar en ${esc(c.name)}" aria-label="Buscar en ${esc(c.name)}"></label>${quick
+    .map((f) => {
+      const sub = f.key === t?.subcategoryKey,
+        available =
+          f.type === 'boolean'
+            ? [
+                { value: 'true', label: 'Sí' },
+                { value: 'false', label: 'No' },
+              ]
+            : taxonomyOptions(c, f, sub ? parent || '__none__' : undefined) ||
+              (app
+                ? collectionOptions(app, c, f)
+                : (f.options || []).map((x) => ({ value: x, label: x }))),
+        base = baseFilters.find((r) => r.field === f.key && r.op === 'eq'),
+        options = base
+          ? available.filter((o) => String(o.value) === String(base.value))
+          : available;
+      const value = filters.find((r) => r.field === f.key && r.op === 'eq')?.value || '';
+      return `<label class="query-select"><span>${esc(f.label)}</span><select data-query-field="${esc(f.key)}" ${scopeAttrs(scope)} ${sub && !parent ? 'disabled' : ''}><option value="">${sub && !parent ? 'Elegí una categoría' : 'Todos'}</option>${options.map((o) => `<option value="${esc(o.value)}" ${String(value) === String(o.value) ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}</select></label>`;
+    })
+    .join(
+      '',
+    )}<button type="button" class="btn btn-plain btn-small" data-action="more-filters" ${scopeAttrs(scope)}>${icon('settings', 16)} Condiciones${filters.length ? ` <span class="query-count">${filters.length}</span>` : ''}</button></div>${filters.length ? `<div class="query-chips">${filterChips(c, filters, scope, app)}${button('Limpiar filtros', 'clear-query', scopeAttrs(scope) + ' type="button"', 'text-link')}</div>` : ''}</div>`;
 }
-export function filterValueInput(c,f,op,value='',app){
-  if(['empty','notempty'].includes(op))return '<p class="subtle-note">Esta condición no necesita un valor.</p>';
-  const options=f.type==='boolean'?[{value:'true',label:'Sí'},{value:'false',label:'No'}]:taxonomyOptions(c,f)||(f.type==='select'?(app?collectionOptions(app,c,f):f.options.map(x=>({value:x,label:x}))):null);
-  return `<label>Valor${options?`<select name="value" required><option value="">Elegí una opción</option>${options.map(o=>`<option value="${esc(o.value)}" ${String(value)===String(o.value)?'selected':''}>${esc(o.label)}</option>`).join('')}</select>`:`<input name="value" type="${f.type==='number'?'number':f.type==='date'?'date':'text'}" ${f.type==='number'?'step="any"':''} maxlength="300" required value="${esc(value)}">`}</label>`;
+export function groupEditor(group) {
+  return `<article class="taxonomy-group" data-group="${esc(group.id)}"><div class="taxonomy-group-heading"><span>${icon('layers', 20)}</span><label>Nombre de la categoría<input data-category-name value="${esc(group.name)}" required maxlength="60" placeholder="Ej.: Insumos, Productos, Áreas"></label><button type="button" class="icon-button danger" data-action="remove-category" aria-label="Quitar categoría">${icon('trash', 17)}</button></div><div class="taxonomy-children">${group.children.map((s) => childEditor(s)).join('')}</div><button type="button" class="text-link" data-action="add-subcategory">${icon('plus', 15)} Agregar subcategoría</button></article>`;
 }
-export function filtersModal(c,filters,scope,app){
-  const f=c.fields[0];
-  return `<span class="eyebrow">${scope.kind==='saved'?'LA VISTA QUE SIEMPRE QUERÉS VER':'ENCONTRÁ LO QUE NECESITÁS'}</span><h2 id="modal-title">Combiná condiciones.</h2><p class="modal-intro">${scope.kind==='saved'?'Estas condiciones quedan guardadas en el bloque. Los datos de la tabla se conservan completos.':'Filtrá esta vista por campos propios, números, estados o fechas. Se deben cumplir todas las condiciones.'}</p><div class="filter-manager-chips">${filterChips(c,filters,scope,app)||'<span class="subtle-note">Todavía no hay condiciones.</span>'}</div><form data-form="query-filter" ${scopeAttrs(scope)}><div class="form-grid"><label>Campo<select name="field" data-filter-field>${c.fields.map(f=>`<option value="${esc(f.key)}">${esc(f.label)}</option>`).join('')}</select></label><label>Condición<select name="op" data-filter-op>${operatorsFor(f).map(op=>`<option value="${op}">${operatorLabels[op]}</option>`).join('')}</select></label></div><div class="filter-value-editor">${filterValueInput(c,f,'eq','',app)}</div><div class="modal-actions"><button type="button" class="btn btn-plain" data-action="close-modal">Listo</button><button class="btn btn-dark" type="submit">${icon('plus',16)} Agregar condición</button></div></form>`;
+export function childEditor(child) {
+  return `<div class="taxonomy-child" data-subcategory="${esc(child.id)}"><span class="taxonomy-branch" aria-hidden="true"></span><input data-subcategory-name value="${esc(child.name)}" required maxlength="60" placeholder="Nombre de la subcategoría" aria-label="Nombre de la subcategoría"><button type="button" class="icon-button danger" data-action="remove-subcategory" aria-label="Quitar subcategoría">${icon('close', 16)}</button></div>`;
 }
-export function blockExtraSettings(app,b,c,can){
-  const disabled=can?'':'disabled';
-  const uses={table:'Usá la misma tabla en distintos bloques: uno con todos los registros y otro con una vista guardada por categoría o estado.',materials:'Clasificá tus insumos y elegí qué columnas y familias querés consultar en esta vista.',orders:'Separá pedidos por estado, origen o fecha sin duplicarlos. La producción sigue conectada al inventario.',metric:'Conectá una tabla y elegí qué contar, sumar o promediar. Podés medir solo una categoría o los registros que cumplen tus condiciones.',form:'Conectá la tabla donde se guardan los registros. Elegí los campos que va a completar tu equipo y cambiá el texto del botón.',calculator:'Definí dos datos, una operación y una unidad. Sirve para consumos, costos, tiempos o cantidades; el resultado se calcula al usar el bloque.'};
-  let html=uses[b.type]?`<p class="block-use-note">${esc(uses[b.type])}</p>`:'';
-  if(c&&['table','materials','orders','metric'].includes(b.type))html+=`<fieldset class="block-parameters"><legend>Cómo se usa este bloque</legend><label class="check-label"><input type="checkbox" name="showFilters" ${b.showFilters!==false?'checked':''} ${disabled}> Mostrar buscador y filtros</label>${can?button(`${icon('settings',15)} Vista filtrada${b.filters?.length?` · ${b.filters.length}`:''}`,'more-filters',`${scopeAttrs({kind:'saved',collection:c.id,block:b.id})} type="button"`,'btn btn-plain btn-small'):''}<p class="subtle-note" data-saved-summary="${esc(b.id)}">${(b.filters||[]).map(r=>esc(filterDescription(c,r,app))).join(' + ')}</p><span class="parameter-caption">Filtros rápidos visibles</span>${c.fields.filter(f=>['select','boolean'].includes(f.type)).map(f=>`<label class="check-label"><input type="checkbox" name="filterFields" value="${esc(f.key)}" ${!b.filterFields||b.filterFields.includes(f.key)?'checked':''} ${disabled}>${esc(f.label)}</label>`).join('')}</fieldset>`;
-  if(b.type==='metric')html+=`<fieldset class="block-parameters"><legend>Qué querés medir</legend><label>Operación<select name="metricKind" ${disabled}>${[['count','Cantidad de registros'],['sum','Sumar valores'],['average','Promedio'],['min','Valor mínimo'],['max','Valor máximo']].map(([v,l])=>`<option value="${v}" ${(b.metric?.kind||'count')===v?'selected':''}>${l}</option>`).join('')}</select></label><label>Campo numérico<select name="metricField" ${disabled}><option value="">Para contar no hace falta</option>${(c?.fields||[]).filter(f=>f.type==='number').map(f=>`<option value="${esc(f.key)}" ${b.metric?.field===f.key?'selected':''}>${esc(f.label)}</option>`).join('')}</select></label><label>Unidad o aclaración<input name="suffix" maxlength="40" value="${esc(b.suffix||'')}" placeholder="Ej.: unidades, horas, pedidos" ${disabled}></label></fieldset>`;
-  if(b.type==='form')html+=`<label>Texto del botón<input name="submitLabel" maxlength="60" value="${esc(b.submitLabel||'Guardar registro')}" ${disabled}></label>`;
-  if(b.type==='calculator')html+=`<fieldset class="block-parameters"><legend>Tu cálculo, tus palabras</legend><label>Primer dato<input name="leftLabel" maxlength="60" value="${esc(b.leftLabel||'Cantidad')}" ${disabled}></label><label>Segundo dato<input name="rightLabel" maxlength="60" value="${esc(b.rightLabel||'Valor unitario')}" ${disabled}></label><label>Operación<select name="operation" ${disabled}>${[['multiply','Multiplicar'],['add','Sumar'],['subtract','Restar'],['divide','Dividir']].map(([v,l])=>`<option value="${v}" ${(b.operation||'multiply')===v?'selected':''}>${l}</option>`).join('')}</select></label><label>Nombre del resultado<input name="resultLabel" maxlength="60" value="${esc(b.resultLabel||'Total')}" ${disabled}></label><label>Formato<select name="resultFormat" ${disabled}><option value="money" ${b.resultFormat!=='number'?'selected':''}>Importe ($)</option><option value="number" ${b.resultFormat==='number'?'selected':''}>Número</option></select></label><label>Unidad opcional<input name="suffix" maxlength="40" value="${esc(b.suffix||'')}" placeholder="Ej.: gramos, horas, unidades" ${disabled}></label></fieldset>`;
+export function taxonomyModal(c, groups) {
+  return `<span class="eyebrow">TU NEGOCIO TIENE SU PROPIO ORDEN</span><h2 id="modal-title">Categorías a tu manera.</h2><p class="modal-intro">Podés llamarlas “Familia y tipo”, “Área y equipo” o como te resulte natural. Cada subcategoría pertenece a una categoría.</p><form data-form="taxonomy" data-collection="${esc(c.id)}"><div class="form-grid taxonomy-levels"><label>Nombre del primer nivel<input name="categoryLabel" maxlength="60" required value="${esc(c.taxonomy?.categoryLabel || 'Categoría')}"></label><label>Nombre del segundo nivel<input name="subcategoryLabel" maxlength="60" required value="${esc(c.taxonomy?.subcategoryLabel || 'Subcategoría')}"></label></div><div class="taxonomy-groups">${groups.map(groupEditor).join('')}</div><button type="button" class="btn btn-plain btn-small" data-action="add-category">${icon('plus', 17)} Otra categoría</button><p class="subtle-note">Se agregan dos campos a esta tabla. Los nombres se pueden cambiar; para quitar una opción en uso, primero reasigná sus registros y filtros.</p><div class="modal-actions"><button type="button" class="btn btn-plain" data-action="close-modal">Cancelar</button><button class="btn btn-dark" type="submit">Guardar categorías</button></div></form>`;
+}
+export function filterValueInput(c, f, op, value = '', app) {
+  if (['empty', 'notempty'].includes(op))
+    return '<p class="subtle-note">Esta condición no necesita un valor.</p>';
+  const options =
+    f.type === 'boolean'
+      ? [
+          { value: 'true', label: 'Sí' },
+          { value: 'false', label: 'No' },
+        ]
+      : taxonomyOptions(c, f) ||
+        (f.type === 'select'
+          ? app
+            ? collectionOptions(app, c, f)
+            : f.options.map((x) => ({ value: x, label: x }))
+          : null);
+  return `<label>Valor${options ? `<select name="value" required><option value="">Elegí una opción</option>${options.map((o) => `<option value="${esc(o.value)}" ${String(value) === String(o.value) ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}</select>` : `<input name="value" type="${f.type === 'number' ? 'number' : f.type === 'date' ? 'date' : 'text'}" ${f.type === 'number' ? 'step="any"' : ''} maxlength="300" required value="${esc(value)}">`}</label>`;
+}
+export function filtersModal(c, filters, scope, app) {
+  const f = c.fields[0];
+  return `<span class="eyebrow">${scope.kind === 'saved' ? 'LA VISTA QUE SIEMPRE QUERÉS VER' : 'ENCONTRÁ LO QUE NECESITÁS'}</span><h2 id="modal-title">Combiná condiciones.</h2><p class="modal-intro">${scope.kind === 'saved' ? 'Estas condiciones quedan guardadas en el bloque. Los datos de la tabla se conservan completos.' : 'Filtrá esta vista por campos propios, números, estados o fechas. Se deben cumplir todas las condiciones.'}</p><div class="filter-manager-chips">${filterChips(c, filters, scope, app) || '<span class="subtle-note">Todavía no hay condiciones.</span>'}</div><form data-form="query-filter" ${scopeAttrs(scope)}><div class="form-grid"><label>Campo<select name="field" data-filter-field>${c.fields.map((f) => `<option value="${esc(f.key)}">${esc(f.label)}</option>`).join('')}</select></label><label>Condición<select name="op" data-filter-op>${operatorsFor(
+    f,
+  )
+    .map((op) => `<option value="${op}">${operatorLabels[op]}</option>`)
+    .join(
+      '',
+    )}</select></label></div><div class="filter-value-editor">${filterValueInput(c, f, 'eq', '', app)}</div><div class="modal-actions"><button type="button" class="btn btn-plain" data-action="close-modal">Listo</button><button class="btn btn-dark" type="submit">${icon('plus', 16)} Agregar condición</button></div></form>`;
+}
+export function blockExtraSettings(app, b, c, can) {
+  const disabled = can ? '' : 'disabled';
+  const uses = {
+    table:
+      'Usá la misma tabla en distintos bloques: uno con todos los registros y otro con una vista guardada por categoría o estado.',
+    materials:
+      'Clasificá tus insumos y elegí qué columnas y familias querés consultar en esta vista.',
+    orders:
+      'Separá pedidos por estado, origen o fecha sin duplicarlos. La producción sigue conectada al inventario.',
+    metric:
+      'Conectá una tabla y elegí qué contar, sumar o promediar. Podés medir solo una categoría o los registros que cumplen tus condiciones.',
+    form: 'Conectá la tabla donde se guardan los registros. Elegí los campos que va a completar tu equipo y cambiá el texto del botón.',
+    calculator:
+      'Definí dos datos, una operación y una unidad. Sirve para consumos, costos, tiempos o cantidades; el resultado se calcula al usar el bloque.',
+  };
+  let html = uses[b.type] ? `<p class="block-use-note">${esc(uses[b.type])}</p>` : '';
+  if (c && ['table', 'materials', 'orders', 'metric'].includes(b.type))
+    html += `<fieldset class="block-parameters"><legend>Cómo se usa este bloque</legend><label class="check-label"><input type="checkbox" name="showFilters" ${b.showFilters !== false ? 'checked' : ''} ${disabled}> Mostrar buscador y filtros</label>${can ? button(`${icon('settings', 15)} Vista filtrada${b.filters?.length ? ` · ${b.filters.length}` : ''}`, 'more-filters', `${scopeAttrs({ kind: 'saved', collection: c.id, block: b.id })} type="button"`, 'btn btn-plain btn-small') : ''}<p class="subtle-note" data-saved-summary="${esc(b.id)}">${(b.filters || []).map((r) => esc(filterDescription(c, r, app))).join(' + ')}</p><span class="parameter-caption">Filtros rápidos visibles</span>${c.fields
+      .filter((f) => ['select', 'boolean'].includes(f.type))
+      .map(
+        (f) =>
+          `<label class="check-label"><input type="checkbox" name="filterFields" value="${esc(f.key)}" ${!b.filterFields || b.filterFields.includes(f.key) ? 'checked' : ''} ${disabled}>${esc(f.label)}</label>`,
+      )
+      .join('')}</fieldset>`;
+  if (b.type === 'metric')
+    html += `<fieldset class="block-parameters"><legend>Qué querés medir</legend><label>Operación<select name="metricKind" ${disabled}>${[
+      ['count', 'Cantidad de registros'],
+      ['sum', 'Sumar valores'],
+      ['average', 'Promedio'],
+      ['min', 'Valor mínimo'],
+      ['max', 'Valor máximo'],
+    ]
+      .map(
+        ([v, l]) =>
+          `<option value="${v}" ${(b.metric?.kind || 'count') === v ? 'selected' : ''}>${l}</option>`,
+      )
+      .join(
+        '',
+      )}</select></label><label>Campo numérico<select name="metricField" ${disabled}><option value="">Para contar no hace falta</option>${(
+      c?.fields || []
+    )
+      .filter((f) => f.type === 'number')
+      .map(
+        (f) =>
+          `<option value="${esc(f.key)}" ${b.metric?.field === f.key ? 'selected' : ''}>${esc(f.label)}</option>`,
+      )
+      .join(
+        '',
+      )}</select></label><label>Unidad o aclaración<input name="suffix" maxlength="40" value="${esc(b.suffix || '')}" placeholder="Ej.: unidades, horas, pedidos" ${disabled}></label></fieldset>`;
+  if (b.type === 'form')
+    html += `<label>Texto del botón<input name="submitLabel" maxlength="60" value="${esc(b.submitLabel || 'Guardar registro')}" ${disabled}></label>`;
+  if (b.type === 'calculator')
+    html += `<fieldset class="block-parameters"><legend>Tu cálculo, tus palabras</legend><label>Primer dato<input name="leftLabel" maxlength="60" value="${esc(b.leftLabel || 'Cantidad')}" ${disabled}></label><label>Segundo dato<input name="rightLabel" maxlength="60" value="${esc(b.rightLabel || 'Valor unitario')}" ${disabled}></label><label>Operación<select name="operation" ${disabled}>${[
+      ['multiply', 'Multiplicar'],
+      ['add', 'Sumar'],
+      ['subtract', 'Restar'],
+      ['divide', 'Dividir'],
+    ]
+      .map(
+        ([v, l]) =>
+          `<option value="${v}" ${(b.operation || 'multiply') === v ? 'selected' : ''}>${l}</option>`,
+      )
+      .join(
+        '',
+      )}</select></label><label>Nombre del resultado<input name="resultLabel" maxlength="60" value="${esc(b.resultLabel || 'Total')}" ${disabled}></label><label>Formato<select name="resultFormat" ${disabled}><option value="money" ${b.resultFormat !== 'number' ? 'selected' : ''}>Importe ($)</option><option value="number" ${b.resultFormat === 'number' ? 'selected' : ''}>Número</option></select></label><label>Unidad opcional<input name="suffix" maxlength="40" value="${esc(b.suffix || '')}" placeholder="Ej.: gramos, horas, unidades" ${disabled}></label></fieldset>`;
   return html;
 }

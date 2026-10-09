@@ -1,3 +1,4 @@
+# Evita incluir secretos, dependencias locales e historial en la imagen.
 .git
 .github
 node_modules

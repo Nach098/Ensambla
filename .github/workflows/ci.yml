@@ -1,3 +1,4 @@
+# Verifica código, migraciones e imagen. No despliega ni administra proveedores.
 name: Verificar Ensambla
 on:
   push:
@@ -18,7 +19,7 @@ jobs:
           POSTGRES_USER: ensambla
           POSTGRES_PASSWORD: ci_only_password
           POSTGRES_DB: ensambla
-        ports: ["5433:5432"]
+        ports: ['5433:5432']
         options: >-
           --health-cmd "pg_isready -U ensambla -d ensambla"
           --health-interval 5s --health-timeout 3s --health-retries 20
@@ -34,6 +35,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+      - run: npm run format:check
       - run: npm test
       - run: npm run build
       - run: npm run db:migrate:production
@@ -52,6 +54,15 @@ jobs:
           }
           if (!ready) throw new Error('La imagen no está lista');
           if (!(await fetch('http://localhost:3000/')).ok) throw new Error('La interfaz no responde');
+          const base = 'http://localhost:3000';
+          const registration = await fetch(base + '/api/auth/register', {
+            method: 'POST',
+            headers: {'content-type':'application/json','x-ensambla-request':'1',origin:base},
+            body: JSON.stringify({email:'container@example.test',displayName:'Container check',password:'Frase de prueba del contenedor 2026'})
+          });
+          if (registration.status !== 201) throw new Error('No se pudo registrar desde la imagen');
+          const cookie = registration.headers.get('set-cookie').split(';')[0];
+          if (!(await fetch(base + '/api/workspaces', {headers:{cookie}})).ok) throw new Error('La sesión de la imagen no funciona');
           JS
       - if: always()
         run: docker compose logs --no-color && docker compose down

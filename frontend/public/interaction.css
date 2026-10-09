@@ -1,65 +1,224 @@
 /* Subtle surface feedback; individual translate preserves artwork and FLIP. */
-:is(#app,#modal) :is(
-  .application-card,.new-application-card,.welcome-banner,.trial-card,
-  .admin-card,.data-card,.settings-card,.integration-card,.process-card,
-  .app-block,.order-card,.recipe-card,.stat,.inspector,.rail-tip,
-  .identity-preview,.offline-note,.use-slide,
-  .plan,.use-card,.access-lab,.access-result,.access-principles>article,
-  .product-shot,.shot-stats>div,.shot-table,.assembly-window,.stage-block,
-  .tailored-bento>article,.taxonomy-showcase,.filter-showcase,.parameter-showcase,
-  .case-app,.faqs>details,.guide-steps>li,.template-tile,
-  .catalog-grid>button,.layout-presets>button,.start-option-list>button,.block-palette>button
-){
-  translate:0 0;
-  transition:translate 300ms var(--motion-ease),transform 300ms var(--motion-ease),
-    box-shadow 300ms var(--motion-ease),border-color 220ms ease,
-    background-color 220ms ease,color 220ms ease;
+:is(#app, #modal)
+  :is(
+    .application-card,
+    .new-application-card,
+    .welcome-banner,
+    .trial-card,
+    .admin-card,
+    .data-card,
+    .settings-card,
+    .integration-card,
+    .process-card,
+    .app-block,
+    .order-card,
+    .recipe-card,
+    .stat,
+    .inspector,
+    .rail-tip,
+    .identity-preview,
+    .offline-note,
+    .use-slide,
+    .plan,
+    .use-card,
+    .access-lab,
+    .access-result,
+    .access-principles > article,
+    .product-shot,
+    .shot-stats > div,
+    .shot-table,
+    .assembly-window,
+    .stage-block,
+    .tailored-bento > article,
+    .taxonomy-showcase,
+    .filter-showcase,
+    .parameter-showcase,
+    .case-app,
+    .faqs > details,
+    .guide-steps > li,
+    .template-tile,
+    .catalog-grid > button,
+    .layout-presets > button,
+    .start-option-list > button,
+    .block-palette > button
+  ) {
+  translate: 0 0;
+  transition:
+    translate 300ms var(--motion-ease),
+    transform 300ms var(--motion-ease),
+    box-shadow 300ms var(--motion-ease),
+    border-color 220ms ease,
+    background-color 220ms ease,
+    color 220ms ease;
 }
-@media (hover:hover) and (pointer:fine){
-  :is(#app,#modal) :is(
-    .application-card,.new-application-card,.welcome-banner,.trial-card,
-    .admin-card,.data-card,.settings-card,.integration-card,.process-card,
-    .app-block,.order-card,.recipe-card,.stat,.inspector,.rail-tip,
-    .identity-preview,.offline-note,.use-slide,
-    .plan,.use-card,.access-lab,.access-result,.access-principles>article,
-    .product-shot,.shot-stats>div,.shot-table,.assembly-window,.stage-block,
-    .tailored-bento>article,.taxonomy-showcase,.filter-showcase,.parameter-showcase,
-    .case-app,.faqs>details,.guide-steps>li,.template-tile,
-    .catalog-grid>button,.layout-presets>button,.start-option-list>button,.block-palette>button
-  ):not(:disabled):not(.dragging):hover{translate:0 -2px}
+@media (hover: hover) and (pointer: fine) {
+  :is(#app, #modal)
+    :is(
+      .application-card,
+      .new-application-card,
+      .welcome-banner,
+      .trial-card,
+      .admin-card,
+      .data-card,
+      .settings-card,
+      .integration-card,
+      .process-card,
+      .app-block,
+      .order-card,
+      .recipe-card,
+      .stat,
+      .inspector,
+      .rail-tip,
+      .identity-preview,
+      .offline-note,
+      .use-slide,
+      .plan,
+      .use-card,
+      .access-lab,
+      .access-result,
+      .access-principles > article,
+      .product-shot,
+      .shot-stats > div,
+      .shot-table,
+      .assembly-window,
+      .stage-block,
+      .tailored-bento > article,
+      .taxonomy-showcase,
+      .filter-showcase,
+      .parameter-showcase,
+      .case-app,
+      .faqs > details,
+      .guide-steps > li,
+      .template-tile,
+      .catalog-grid > button,
+      .layout-presets > button,
+      .start-option-list > button,
+      .block-palette > button
+    ):not(:disabled):not(.dragging):hover {
+    translate: 0 -2px;
+  }
 }
 /* Keyboard focus gets the same feedback; a focused form stays at one position. */
-:is(#app,#modal) :is(
-  .application-card,.new-application-card,.welcome-banner,.trial-card,
-  .admin-card,.data-card,.settings-card,.integration-card,.process-card,
-  .app-block,.order-card,.recipe-card,.stat,.inspector,
-  .identity-preview,.offline-note,.use-slide,
-  .plan,.use-card,.access-lab,.access-result,.access-principles>article,
-  .product-shot,.shot-table,.assembly-window,.stage-block,
-  .tailored-bento>article,.taxonomy-showcase,.filter-showcase,.parameter-showcase,
-  .case-app,.faqs>details,.guide-steps>li,.template-tile,
-  .catalog-grid>button,.layout-presets>button,.start-option-list>button,.block-palette>button
-):not(.dragging):focus-within{translate:0 -2px}
+:is(#app, #modal)
+  :is(
+    .application-card,
+    .new-application-card,
+    .welcome-banner,
+    .trial-card,
+    .admin-card,
+    .data-card,
+    .settings-card,
+    .integration-card,
+    .process-card,
+    .app-block,
+    .order-card,
+    .recipe-card,
+    .stat,
+    .inspector,
+    .identity-preview,
+    .offline-note,
+    .use-slide,
+    .plan,
+    .use-card,
+    .access-lab,
+    .access-result,
+    .access-principles > article,
+    .product-shot,
+    .shot-table,
+    .assembly-window,
+    .stage-block,
+    .tailored-bento > article,
+    .taxonomy-showcase,
+    .filter-showcase,
+    .parameter-showcase,
+    .case-app,
+    .faqs > details,
+    .guide-steps > li,
+    .template-tile,
+    .catalog-grid > button,
+    .layout-presets > button,
+    .start-option-list > button,
+    .block-palette > button
+  ):not(.dragging):focus-within {
+  translate: 0 -2px;
+}
 
 /* Existing button lifts use this shared motion, avoiding doubled movement. */
-:is(#app,#modal) :is(.new-application-card,.template-tile,.catalog-grid>button,
-  .layout-presets>button,.block-palette>button):hover{transform:none}
-#app .app-block.dragging{translate:0 0;transition:none}
+:is(#app, #modal)
+  :is(
+    .new-application-card,
+    .template-tile,
+    .catalog-grid > button,
+    .layout-presets > button,
+    .block-palette > button
+  ):hover {
+  transform: none;
+}
+#app .app-block.dragging {
+  translate: 0 0;
+  transition: none;
+}
 
 /* Pair compact pieces before a wide row; no half-empty rows after mixing. */
-.landing.landing-alive .stage-grid>.stage-block.stage-span-1{grid-column:span 1}
-.landing.landing-alive .stage-grid>.stage-block.stage-span-2{grid-column:1/-1}
-@media (max-width:520px){
-  .landing.landing-alive .stage-grid>.stage-block:is(.stage-span-1,.stage-span-2){grid-column:1/-1}
+.landing.landing-alive .stage-grid > .stage-block.stage-span-1 {
+  grid-column: span 1;
+}
+.landing.landing-alive .stage-grid > .stage-block.stage-span-2 {
+  grid-column: 1/-1;
+}
+@media (max-width: 520px) {
+  .landing.landing-alive .stage-grid > .stage-block:is(.stage-span-1, .stage-span-2) {
+    grid-column: 1/-1;
+  }
 }
 
-#app [data-motion-paused="true"] :is(article,section,figure,details,button,aside,.shot-stats>div,.shot-table,.product-shot,.assembly-window,.case-app,.taxonomy-showcase,.filter-showcase,.parameter-showcase,.guide-steps>li){
-  translate:0 0!important;
-  transition:none!important;
+#app
+  [data-motion-paused='true']
+  :is(
+    article,
+    section,
+    figure,
+    details,
+    button,
+    aside,
+    .shot-stats > div,
+    .shot-table,
+    .product-shot,
+    .assembly-window,
+    .case-app,
+    .taxonomy-showcase,
+    .filter-showcase,
+    .parameter-showcase,
+    .guide-steps > li
+  ) {
+  translate: 0 0 !important;
+  transition: none !important;
 }
-@media (prefers-reduced-motion:reduce){
-  :is(#app,#modal) :is(article,section,figure,details,button,aside,.stat,.trial-card,.rail-tip,.welcome-banner,.access-result,.shot-stats>div,.shot-table,.product-shot,.assembly-window,.case-app,.taxonomy-showcase,.filter-showcase,.parameter-showcase,.guide-steps>li){
-    translate:0 0!important;
-    transition:none!important;
+@media (prefers-reduced-motion: reduce) {
+  :is(#app, #modal)
+    :is(
+      article,
+      section,
+      figure,
+      details,
+      button,
+      aside,
+      .stat,
+      .trial-card,
+      .rail-tip,
+      .welcome-banner,
+      .access-result,
+      .shot-stats > div,
+      .shot-table,
+      .product-shot,
+      .assembly-window,
+      .case-app,
+      .taxonomy-showcase,
+      .filter-showcase,
+      .parameter-showcase,
+      .guide-steps > li
+    ) {
+    translate: 0 0 !important;
+    transition: none !important;
   }
 }

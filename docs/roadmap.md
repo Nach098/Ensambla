@@ -1,8 +1,8 @@
 # Orden de implementación
 
-## 1. Cuentas y espacios
+## 1. Cuentas y espacios: base implementada
 
-Registro, inicio/cierre de sesión, recuperación, hash de contraseña, sesiones seguras y protección CSRF cuando corresponda. Propietario real y colaboradores con permisos. Implementar el máximo inicial de tres accesos mediante una transacción. Probar acceso denegado entre cuentas antes de crear endpoints de negocio.
+Implementados registro, inicio/cierre de sesión, perfiles, cambio de contraseña, hashes, sesiones persistentes y protección CSRF. Propietario real y hasta tres colaboradores con permisos comprobados en el servidor. El límite y la separación entre cuentas tienen pruebas concurrentes. Antes de registro público: verificación del correo, recuperación de contraseña olvidada e invitaciones confirmadas.
 
 ## 2. Guardar y recuperar aplicaciones
 
@@ -30,4 +30,4 @@ Entorno de pruebas con varios usuarios, pruebas del flujo real en navegador, seg
 
 ## Próximo pedido recomendado
 
-“Implementemos registro e inicio de sesión, con un espacio por propietario y permisos reales, usando esta estructura. Conservá la interfaz y agregá pruebas de separación entre cuentas.”
+“Conectemos aplicaciones, colecciones y registros con PostgreSQL, usando las cuentas y permisos reales. Agregá una importación explícita de borradores locales y pruebas de acceso entre propietarios.”

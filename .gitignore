@@ -1,3 +1,4 @@
+# Excluye secretos, datos locales y archivos generados del repositorio.
 node_modules/
 backend/dist/
 coverage/

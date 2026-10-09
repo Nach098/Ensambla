@@ -1,3 +1,4 @@
+# Construye el backend y empaqueta la interfaz. Ejecuta el servidor como usuario sin privilegios.
 FROM node:24-bookworm-slim AS build
 WORKDIR /app
 COPY package.json package-lock.json ./

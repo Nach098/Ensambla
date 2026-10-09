@@ -13,3 +13,6 @@
 - Para cambios de código, ejecutar `npm run check`, `npm test` y `npm run build`; agregar pruebas de comportamiento cuando sea necesario.
 - Para cambios visuales, revisar teclado, foco, móviles, selección en formularios y movimiento reducido.
 - No afirmar que el producto está listo para clientes por tener Docker o pasar pruebas. Documentar el alcance real.
+- Empezar los archivos de código con un resumen breve de su responsabilidad en español. JSON estricto y recursos generados se explican en docs/guia-del-codigo.md.
+- Conservar la separación entre rutas, validación, servicios y SQL. No simular roles ni guardar tokens en localStorage.
+- Usar npm run format y comprobar npm run format:check. No reformatear migraciones ya aplicadas.

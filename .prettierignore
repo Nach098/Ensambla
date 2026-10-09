@@ -1,0 +1,7 @@
+# Recursos binarios, datos generados e historia que no deben reformatearse.
+node_modules/
+backend/dist/
+frontend/public/landing-photos.js
+frontend/public/assets/
+package-lock.json
+docs/maqueta/

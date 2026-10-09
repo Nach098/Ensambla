@@ -1,10 +1,15 @@
 {
   "name": "ensambla",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
-  "workspaces": ["backend", "frontend"],
-  "engines": { "node": ">=24 <25" },
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=24 <25"
+  },
   "scripts": {
     "dev": "node --env-file-if-exists=.env --import tsx --watch backend/src/server.ts",
     "build": "npm run build --workspace @ensambla/backend",
@@ -12,6 +17,14 @@
     "check": "npm run check --workspaces",
     "test": "npm run test --workspaces",
     "db:migrate": "node --env-file-if-exists=.env --import tsx backend/src/database/cli.ts",
-    "db:migrate:production": "node --env-file-if-exists=.env backend/dist/database/cli.js"
-  }
+    "db:migrate:production": "node --env-file-if-exists=.env backend/dist/database/cli.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:cleanup-auth": "node --env-file-if-exists=.env --import tsx backend/src/database/cleanup-auth.ts",
+    "db:cleanup-auth:production": "node --env-file-if-exists=.env backend/dist/database/cleanup-auth.js"
+  },
+  "devDependencies": {
+    "prettier": "3.9.9"
+  },
+  "description": "Comandos y espacios de trabajo del proyecto Ensambla."
 }

@@ -1,191 +1,880 @@
 /* A warm moving backdrop and a different composition for each chapter. */
-:root{--motion-main:360ms;--motion-ease:cubic-bezier(.22,.75,.25,1)}
-.landing{--ambient-playing:running}
-.landing[data-motion-paused="true"],[data-ambient-active="false"]{--ambient-playing:paused}
-
-.landing.landing-alive .landing-atmosphere{
-  position:fixed;inset:0;height:100vh;height:100svh;contain:paint;
-  pointer-events:none;overflow:hidden;z-index:0;
+:root {
+  --motion-main: 360ms;
+  --motion-ease: cubic-bezier(0.22, 0.75, 0.25, 1);
 }
-.ambient-grid{position:absolute;width:240px;height:240px;left:-100px;top:42%;border-radius:26px;transform:rotate(12deg);background-image:radial-gradient(#99633a26 1.5px,transparent 1.5px);background-size:23px 23px;opacity:.6}
-.ambient-shape{position:absolute;display:block;pointer-events:none;--sway-x:34px;--sway-y:-44px;--tilt:-10deg;--turn:12deg;animation:ambient-drift 24s ease-in-out infinite;animation-play-state:var(--ambient-playing)}
-.ambient-mint{width:180px;height:180px;left:-94px;top:20%;border-radius:42px;background:#79dfbb66;--tilt:-16deg;--sway-x:44px;--sway-y:56px}
-.ambient-violet{width:105px;height:230px;right:-36px;top:12%;border-radius:30px;background:#b09ae64d;--tilt:24deg;--sway-x:-35px;--sway-y:48px;--turn:-16deg;animation-duration:27s;animation-delay:-8s}
-.ambient-coral{width:110px;height:110px;right:7%;bottom:12%;border-radius:28px;background:#ff9a8261;--tilt:18deg;--sway-x:-43px;--sway-y:-50px;animation-duration:23s;animation-delay:-12s}
-.ambient-blue-ring{width:250px;height:250px;left:8%;bottom:-145px;border:3px solid #70b8f57a;border-radius:50%;--sway-x:28px;--sway-y:-45px;--tilt:0deg;animation-duration:30s;animation-delay:-4s}
-.ambient-sun{width:190px;height:190px;right:-112px;top:52%;border:24px solid #ffce627a;border-radius:50%;--sway-x:-40px;--sway-y:54px;--tilt:0deg;animation-duration:28s;animation-delay:-15s}
+.landing {
+  --ambient-playing: running;
+}
+.landing[data-motion-paused='true'],
+[data-ambient-active='false'] {
+  --ambient-playing: paused;
+}
+
+.landing.landing-alive .landing-atmosphere {
+  position: fixed;
+  inset: 0;
+  height: 100vh;
+  height: 100svh;
+  contain: paint;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.ambient-grid {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  left: -100px;
+  top: 42%;
+  border-radius: 26px;
+  transform: rotate(12deg);
+  background-image: radial-gradient(#99633a26 1.5px, transparent 1.5px);
+  background-size: 23px 23px;
+  opacity: 0.6;
+}
+.ambient-shape {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+  --sway-x: 34px;
+  --sway-y: -44px;
+  --tilt: -10deg;
+  --turn: 12deg;
+  animation: ambient-drift 24s ease-in-out infinite;
+  animation-play-state: var(--ambient-playing);
+}
+.ambient-mint {
+  width: 180px;
+  height: 180px;
+  left: -94px;
+  top: 20%;
+  border-radius: 42px;
+  background: #79dfbb66;
+  --tilt: -16deg;
+  --sway-x: 44px;
+  --sway-y: 56px;
+}
+.ambient-violet {
+  width: 105px;
+  height: 230px;
+  right: -36px;
+  top: 12%;
+  border-radius: 30px;
+  background: #b09ae64d;
+  --tilt: 24deg;
+  --sway-x: -35px;
+  --sway-y: 48px;
+  --turn: -16deg;
+  animation-duration: 27s;
+  animation-delay: -8s;
+}
+.ambient-coral {
+  width: 110px;
+  height: 110px;
+  right: 7%;
+  bottom: 12%;
+  border-radius: 28px;
+  background: #ff9a8261;
+  --tilt: 18deg;
+  --sway-x: -43px;
+  --sway-y: -50px;
+  animation-duration: 23s;
+  animation-delay: -12s;
+}
+.ambient-blue-ring {
+  width: 250px;
+  height: 250px;
+  left: 8%;
+  bottom: -145px;
+  border: 3px solid #70b8f57a;
+  border-radius: 50%;
+  --sway-x: 28px;
+  --sway-y: -45px;
+  --tilt: 0deg;
+  animation-duration: 30s;
+  animation-delay: -4s;
+}
+.ambient-sun {
+  width: 190px;
+  height: 190px;
+  right: -112px;
+  top: 52%;
+  border: 24px solid #ffce627a;
+  border-radius: 50%;
+  --sway-x: -40px;
+  --sway-y: 54px;
+  --tilt: 0deg;
+  animation-duration: 28s;
+  animation-delay: -15s;
+}
 
 /* The pause remains reachable while the full-page background is moving. */
-#app .landing .landing-motion-row>button{position:fixed;right:22px;bottom:22px;z-index:15;display:flex;align-items:center;gap:10px;margin:0;background:#fffaf3;border:1px solid #d7c6b7;box-shadow:0 4px 18px #26344314;max-width:calc(100vw - 44px)}
-#app .landing .landing-motion-row>button:before{content:'';width:8px;height:8px;border-radius:50%;background:#237862;flex-shrink:0}
-#app .landing .landing-motion-row>button[aria-pressed="true"]:before{background:#765b9d}
-#app .landing .site-footer{padding-bottom:105px}
+#app .landing .landing-motion-row > button {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  background: #fffaf3;
+  border: 1px solid #d7c6b7;
+  box-shadow: 0 4px 18px #26344314;
+  max-width: calc(100vw - 44px);
+}
+#app .landing .landing-motion-row > button:before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #237862;
+  flex-shrink: 0;
+}
+#app .landing .landing-motion-row > button[aria-pressed='true']:before {
+  background: #765b9d;
+}
+#app .landing .site-footer {
+  padding-bottom: 105px;
+}
 
 /* The carousel has an editorial side rail, rather than another top heading. */
-#app .landing .uses-layout{display:grid;grid-template-columns:255px minmax(0,1fr);gap:42px;align-items:center}
-#app .landing .uses-heading{display:flex;flex-direction:column;align-items:start;justify-content:center;gap:24px;margin:0;padding-block:20px}
-#app .landing .uses-heading h2{font-size:clamp(36px,3.15vw,46px);line-height:1.15;margin-top:17px;max-width:none}
-#app .landing .uses-heading>p{font-size:1rem;line-height:1.8;color:#59656e;max-width:255px}
-#app .landing .uses-heading .carousel-navigation{margin-top:8px;gap:12px}
-#app .landing .uses-explorer{min-width:0}
-#app .landing .use-slide{grid-template-columns:.95fr 1.05fr}
-#app .landing .use-slide-copy{padding:34px 30px}
-#app .landing .use-slide h3{font-size:clamp(29px,2.5vw,36px);line-height:1.25}
-#app .landing .use-slide-art{padding:32px 25px 80px}
-#app .landing .case-app{padding:23px;width:100%;min-width:0}
-#app .landing .carousel-footer{gap:10px 14px;align-items:center}
-#app .landing .carousel-hint{width:100%;margin-top:2px}
-.use-slide{--case-playing:paused}
-.use-slide[data-carousel-active="true"]{--case-playing:var(--ambient-playing,running)}
-.landing .case-piece{animation:case-float 8s ease-in-out infinite;animation-play-state:var(--case-playing,paused)}
+#app .landing .uses-layout {
+  display: grid;
+  grid-template-columns: 255px minmax(0, 1fr);
+  gap: 42px;
+  align-items: center;
+}
+#app .landing .uses-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  gap: 24px;
+  margin: 0;
+  padding-block: 20px;
+}
+#app .landing .uses-heading h2 {
+  font-size: clamp(36px, 3.15vw, 46px);
+  line-height: 1.15;
+  margin-top: 17px;
+  max-width: none;
+}
+#app .landing .uses-heading > p {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #59656e;
+  max-width: 255px;
+}
+#app .landing .uses-heading .carousel-navigation {
+  margin-top: 8px;
+  gap: 12px;
+}
+#app .landing .uses-explorer {
+  min-width: 0;
+}
+#app .landing .use-slide {
+  grid-template-columns: 0.95fr 1.05fr;
+}
+#app .landing .use-slide-copy {
+  padding: 34px 30px;
+}
+#app .landing .use-slide h3 {
+  font-size: clamp(29px, 2.5vw, 36px);
+  line-height: 1.25;
+}
+#app .landing .use-slide-art {
+  padding: 32px 25px 80px;
+}
+#app .landing .case-app {
+  padding: 23px;
+  width: 100%;
+  min-width: 0;
+}
+#app .landing .carousel-footer {
+  gap: 10px 14px;
+  align-items: center;
+}
+#app .landing .carousel-hint {
+  width: 100%;
+  margin-top: 2px;
+}
+.use-slide {
+  --case-playing: paused;
+}
+.use-slide[data-carousel-active='true'] {
+  --case-playing: var(--ambient-playing, running);
+}
+.landing .case-piece {
+  animation: case-float 8s ease-in-out infinite;
+  animation-play-state: var(--case-playing, paused);
+}
 
 /* A heading occupies one cell of the composition, alongside the actual pieces. */
-#app .landing .tailored-bento{grid-template-columns:.92fr 1.08fr;gap:26px;align-items:stretch}
-#app .landing .tailored-heading{display:flex;flex-direction:column;justify-content:center;align-items:start;gap:21px;padding:26px 38px 26px 0;margin:0}
-#app .landing .tailored-heading .eyebrow{margin:0;line-height:1.8}
-#app .landing .tailored-heading h2{font-size:clamp(36px,3.4vw,49px);line-height:1.16;letter-spacing:-.045em}
-#app .landing .tailored-heading>p{max-width:420px;margin:0}
-#app .landing .tailored-bento article{padding:34px;border-radius:24px}
-#app .landing .taxonomy-showcase{display:flex;flex-direction:column;justify-content:center;gap:13px}
-#app .landing .filter-showcase{display:flex;flex-direction:column;justify-content:center}
-#app .landing .filter-showcase>p{color:#d0e0e6}
-#app .landing .filter-showcase .showcase-result{color:#b7efdd}
-#app .landing .parameter-showcase{grid-column:auto;grid-template-columns:1fr;gap:24px;align-content:center}
-#app .landing .parameter-pieces{justify-content:start;gap:15px}
-#app .landing .parameter-pieces>span{width:100px;min-height:108px}
-.landing .category-tree-children>b{transition:translate 400ms var(--motion-ease),background-color 300ms ease}
-.landing .category-tree-children>b:hover{translate:4px 0;background:#fff8}
+#app .landing .tailored-bento {
+  grid-template-columns: 0.92fr 1.08fr;
+  gap: 26px;
+  align-items: stretch;
+}
+#app .landing .tailored-heading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  gap: 21px;
+  padding: 26px 38px 26px 0;
+  margin: 0;
+}
+#app .landing .tailored-heading .eyebrow {
+  margin: 0;
+  line-height: 1.8;
+}
+#app .landing .tailored-heading h2 {
+  font-size: clamp(36px, 3.4vw, 49px);
+  line-height: 1.16;
+  letter-spacing: -0.045em;
+}
+#app .landing .tailored-heading > p {
+  max-width: 420px;
+  margin: 0;
+}
+#app .landing .tailored-bento article {
+  padding: 34px;
+  border-radius: 24px;
+}
+#app .landing .taxonomy-showcase {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 13px;
+}
+#app .landing .filter-showcase {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+#app .landing .filter-showcase > p {
+  color: #d0e0e6;
+}
+#app .landing .filter-showcase .showcase-result {
+  color: #b7efdd;
+}
+#app .landing .parameter-showcase {
+  grid-column: auto;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-content: center;
+}
+#app .landing .parameter-pieces {
+  justify-content: start;
+  gap: 15px;
+}
+#app .landing .parameter-pieces > span {
+  width: 100px;
+  min-height: 108px;
+}
+.landing .category-tree-children > b {
+  transition:
+    translate 400ms var(--motion-ease),
+    background-color 300ms ease;
+}
+.landing .category-tree-children > b:hover {
+  translate: 4px 0;
+  background: #fff8;
+}
 
 /* The trial is a wide invitation; the two ongoing plans sit beneath it. */
-#app .landing .pricing-layout{display:grid;grid-template-columns:minmax(240px,.75fr) minmax(0,1.7fr);gap:55px;align-items:center;position:relative}
-#app .landing .pricing-heading{text-align:left}
-#app .landing .pricing-heading h2{font-size:clamp(35px,3vw,45px);line-height:1.2;margin-top:18px;letter-spacing:-.045em}
-#app .landing .pricing-heading>p{max-width:330px}
-#app .landing .pricing-heading .pricing-note{padding-top:22px;margin-top:25px;border-top:1px solid #c6b1dc;color:#665277;max-width:310px}
-#app .landing .plans{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin:0}
-#app .landing .plan{display:flex;flex-direction:column;padding:30px;border-radius:22px;min-width:0}
-#app .landing .plan>.btn{margin-top:auto;align-self:stretch}
-#app .landing .plan ul{margin-bottom:26px}
-#app .landing .plan h3{font-size:27px;line-height:1.3}
-#app .landing .plan.featured{transform:none}
-#app .landing .plan-badge{position:static;align-self:start;margin-bottom:17px;max-width:100%}
-#app .landing .plan:first-child{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:9px 30px;background:#fffaf2}
-#app .landing .plan:first-child>:is(.plan-name,h3,p){grid-column:1}
-#app .landing .plan:first-child ul{grid-column:2;grid-row:1/span 3;margin:0}
-#app .landing .plan:first-child li:first-child{margin-top:0}
-#app .landing .plan:first-child>.btn{grid-column:1/-1;margin-top:12px}
+#app .landing .pricing-layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.75fr) minmax(0, 1.7fr);
+  gap: 55px;
+  align-items: center;
+  position: relative;
+}
+#app .landing .pricing-heading {
+  text-align: left;
+}
+#app .landing .pricing-heading h2 {
+  font-size: clamp(35px, 3vw, 45px);
+  line-height: 1.2;
+  margin-top: 18px;
+  letter-spacing: -0.045em;
+}
+#app .landing .pricing-heading > p {
+  max-width: 330px;
+}
+#app .landing .pricing-heading .pricing-note {
+  padding-top: 22px;
+  margin-top: 25px;
+  border-top: 1px solid #c6b1dc;
+  color: #665277;
+  max-width: 310px;
+}
+#app .landing .plans {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin: 0;
+}
+#app .landing .plan {
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  border-radius: 22px;
+  min-width: 0;
+}
+#app .landing .plan > .btn {
+  margin-top: auto;
+  align-self: stretch;
+}
+#app .landing .plan ul {
+  margin-bottom: 26px;
+}
+#app .landing .plan h3 {
+  font-size: 27px;
+  line-height: 1.3;
+}
+#app .landing .plan.featured {
+  transform: none;
+}
+#app .landing .plan-badge {
+  position: static;
+  align-self: start;
+  margin-bottom: 17px;
+  max-width: 100%;
+}
+#app .landing .plan:first-child {
+  grid-column: 1/-1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px 30px;
+  background: #fffaf2;
+}
+#app .landing .plan:first-child > :is(.plan-name, h3, p) {
+  grid-column: 1;
+}
+#app .landing .plan:first-child ul {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  margin: 0;
+}
+#app .landing .plan:first-child li:first-child {
+  margin-top: 0;
+}
+#app .landing .plan:first-child > .btn {
+  grid-column: 1/-1;
+  margin-top: 12px;
+}
 
 /* Local background geometry stays behind the text and images. */
-.landing .world-section,.landing .pricing-section{position:relative;isolation:isolate;overflow:hidden}
-.landing .world-section:before,.landing .pricing-section:before{content:'';position:absolute;pointer-events:none;width:330px;height:330px;border-radius:50%;z-index:-1;animation:section-orbit 26s ease-in-out infinite;animation-play-state:var(--ambient-playing)}
-.landing .world-section:before{top:-165px;left:-105px;border:2px dashed #79ad9166}
-.landing .pricing-section:before{width:350px;height:350px;right:-210px;bottom:-150px;border:42px solid #c7afe359;animation-delay:-10s}
-.landing .world-section:after{content:'';position:absolute;width:100px;height:100px;right:4%;top:14%;background:#a5d5f53b;border-radius:26px;z-index:-1;pointer-events:none;--tilt:12deg;--turn:9deg;--sway-x:-21px;--sway-y:24px;animation:ambient-drift 19s ease-in-out -7s infinite;animation-play-state:var(--ambient-playing)}
-.landing .world-photo>img{animation:photo-breathe 20s ease-in-out infinite;animation-play-state:var(--ambient-playing);transform-origin:50% 45%}
-.landing .photo-team>img{animation-delay:-8s}
-.landing .world-photo:hover>img,.landing .world-photo:focus-within>img{animation-play-state:paused}
-.landing .scene-connection path{animation:connection-flow 24s linear infinite;animation-play-state:var(--ambient-playing);stroke-dasharray:5 8}
-.landing :is(.scene-piece,.assembly-sticker,.world-floating-piece,.parameter-pieces>span,.brand-block-scene>img){animation-play-state:var(--ambient-playing)}
-.landing .brand-block-scene:before,.landing .brand-block-scene:after{animation:case-float 9s ease-in-out infinite;animation-play-state:var(--ambient-playing)}
-.landing .brand-block-scene:after{animation-delay:-4s}
+.landing .world-section,
+.landing .pricing-section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.landing .world-section:before,
+.landing .pricing-section:before {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  width: 330px;
+  height: 330px;
+  border-radius: 50%;
+  z-index: -1;
+  animation: section-orbit 26s ease-in-out infinite;
+  animation-play-state: var(--ambient-playing);
+}
+.landing .world-section:before {
+  top: -165px;
+  left: -105px;
+  border: 2px dashed #79ad9166;
+}
+.landing .pricing-section:before {
+  width: 350px;
+  height: 350px;
+  right: -210px;
+  bottom: -150px;
+  border: 42px solid #c7afe359;
+  animation-delay: -10s;
+}
+.landing .world-section:after {
+  content: '';
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  right: 4%;
+  top: 14%;
+  background: #a5d5f53b;
+  border-radius: 26px;
+  z-index: -1;
+  pointer-events: none;
+  --tilt: 12deg;
+  --turn: 9deg;
+  --sway-x: -21px;
+  --sway-y: 24px;
+  animation: ambient-drift 19s ease-in-out -7s infinite;
+  animation-play-state: var(--ambient-playing);
+}
+.landing .world-photo > img {
+  animation: photo-breathe 20s ease-in-out infinite;
+  animation-play-state: var(--ambient-playing);
+  transform-origin: 50% 45%;
+}
+.landing .photo-team > img {
+  animation-delay: -8s;
+}
+.landing .world-photo:hover > img,
+.landing .world-photo:focus-within > img {
+  animation-play-state: paused;
+}
+.landing .scene-connection path {
+  animation: connection-flow 24s linear infinite;
+  animation-play-state: var(--ambient-playing);
+  stroke-dasharray: 5 8;
+}
+.landing
+  :is(
+    .scene-piece,
+    .assembly-sticker,
+    .world-floating-piece,
+    .parameter-pieces > span,
+    .brand-block-scene > img
+  ) {
+  animation-play-state: var(--ambient-playing);
+}
+.landing .brand-block-scene:before,
+.landing .brand-block-scene:after {
+  animation: case-float 9s ease-in-out infinite;
+  animation-play-state: var(--ambient-playing);
+}
+.landing .brand-block-scene:after {
+  animation-delay: -4s;
+}
 
 /* Entrances settle gently, with a small cascade rather than simultaneous jumps. */
-.landing .hero-copy>:is(.eyebrow,h1,p,.hero-actions,.hero-assurances){animation:hero-arrive 800ms var(--motion-ease) both}
-.landing .hero-copy h1{animation-delay:65ms}
-.landing .hero-copy>p{animation-delay:130ms}
-.landing .hero-actions{animation-delay:200ms!important}
-.landing .hero-assurances{animation-delay:265ms!important}
-.landing .hero-lively{animation:hero-arrive 950ms var(--motion-ease) 120ms both}
-#app .landing[data-intro-complete="true"] :is(.hero-copy>*,.hero-lively){animation:none;opacity:1;translate:0 0}
-#app .landing .reveal-ready{opacity:0;translate:0 28px;transition:opacity 800ms var(--motion-ease),translate 800ms var(--motion-ease),transform 600ms var(--motion-ease),box-shadow 400ms var(--motion-ease),border-color 250ms ease;transition-delay:var(--reveal-delay,0ms)}
-#app .landing .reveal-ready.is-visible{opacity:1;translate:0 0}
-#app .landing .reveal-ready:focus-within{opacity:1;translate:0 -2px;transition-delay:0ms}
+.landing .hero-copy > :is(.eyebrow, h1, p, .hero-actions, .hero-assurances) {
+  animation: hero-arrive 800ms var(--motion-ease) both;
+}
+.landing .hero-copy h1 {
+  animation-delay: 65ms;
+}
+.landing .hero-copy > p {
+  animation-delay: 130ms;
+}
+.landing .hero-actions {
+  animation-delay: 200ms !important;
+}
+.landing .hero-assurances {
+  animation-delay: 265ms !important;
+}
+.landing .hero-lively {
+  animation: hero-arrive 950ms var(--motion-ease) 120ms both;
+}
+#app .landing[data-intro-complete='true'] :is(.hero-copy > *, .hero-lively) {
+  animation: none;
+  opacity: 1;
+  translate: 0 0;
+}
+#app .landing .reveal-ready {
+  opacity: 0;
+  translate: 0 28px;
+  transition:
+    opacity 800ms var(--motion-ease),
+    translate 800ms var(--motion-ease),
+    transform 600ms var(--motion-ease),
+    box-shadow 400ms var(--motion-ease),
+    border-color 250ms ease;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+#app .landing .reveal-ready.is-visible {
+  opacity: 1;
+  translate: 0 0;
+}
+#app .landing .reveal-ready:focus-within {
+  opacity: 1;
+  translate: 0 -2px;
+  transition-delay: 0ms;
+}
 
 /* Small details follow the action, with no layout displacement. */
-:is(#app,#modal) :is(.bento-icon,.palette-icon,.banner-icon,.selected-block-icon){transition:rotate 450ms var(--motion-ease),scale 450ms var(--motion-ease)}
-:is(#app,#modal) :is(.btn,.text-link,.hero-preview-use)>.icon:last-child:not(:first-child){transition:translate 400ms var(--motion-ease)}
-@media (hover:hover) and (pointer:fine){
-  #app .landing .reveal-ready.is-visible:hover{translate:0 -3px;transition-delay:0ms}
-  :is(#app,#modal) :is(article,section,button):hover>.bento-icon,
-  :is(#app,#modal) :is(article,section,button):hover>div>.bento-icon,
-  :is(#app,#modal) .block-palette>button:hover>.palette-icon{rotate:-5deg;scale:1.04}
-  :is(#app,#modal) :is(.btn,.text-link,.hero-preview-use):hover>.icon:last-child:not(:first-child){translate:4px 0}
+:is(#app, #modal) :is(.bento-icon, .palette-icon, .banner-icon, .selected-block-icon) {
+  transition:
+    rotate 450ms var(--motion-ease),
+    scale 450ms var(--motion-ease);
 }
-:is(#app,#modal) :is(.btn,.text-link):focus-visible>.icon:last-child:not(:first-child){translate:4px 0}
-:is(#app,#modal) .btn{transition:scale 250ms var(--motion-ease),background-color 250ms ease,border-color 250ms ease,box-shadow 400ms var(--motion-ease),transform 350ms var(--motion-ease)}
-:is(#app,#modal) .btn:not(:disabled):active{scale:.985}
-::view-transition-group(*){animation-duration:500ms;animation-timing-function:var(--motion-ease)}
-::view-transition-old(root){animation-duration:220ms}
-::view-transition-new(root){animation-duration:420ms}
+:is(#app, #modal) :is(.btn, .text-link, .hero-preview-use) > .icon:last-child:not(:first-child) {
+  transition: translate 400ms var(--motion-ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  #app .landing .reveal-ready.is-visible:hover {
+    translate: 0 -3px;
+    transition-delay: 0ms;
+  }
+  :is(#app, #modal) :is(article, section, button):hover > .bento-icon,
+  :is(#app, #modal) :is(article, section, button):hover > div > .bento-icon,
+  :is(#app, #modal) .block-palette > button:hover > .palette-icon {
+    rotate: -5deg;
+    scale: 1.04;
+  }
+  :is(#app, #modal)
+    :is(.btn, .text-link, .hero-preview-use):hover
+    > .icon:last-child:not(:first-child) {
+    translate: 4px 0;
+  }
+}
+:is(#app, #modal) :is(.btn, .text-link):focus-visible > .icon:last-child:not(:first-child) {
+  translate: 4px 0;
+}
+:is(#app, #modal) .btn {
+  transition:
+    scale 250ms var(--motion-ease),
+    background-color 250ms ease,
+    border-color 250ms ease,
+    box-shadow 400ms var(--motion-ease),
+    transform 350ms var(--motion-ease);
+}
+:is(#app, #modal) .btn:not(:disabled):active {
+  scale: 0.985;
+}
+::view-transition-group(*) {
+  animation-duration: 500ms;
+  animation-timing-function: var(--motion-ease);
+}
+::view-transition-old(root) {
+  animation-duration: 220ms;
+}
+::view-transition-new(root) {
+  animation-duration: 420ms;
+}
 
-@keyframes ambient-drift{0%,100%{transform:translate(0,0) rotate(var(--tilt,-10deg))}50%{transform:translate(var(--sway-x,34px),var(--sway-y,-44px)) rotate(calc(var(--tilt,-10deg) + var(--turn,12deg)))}}
-@keyframes section-orbit{0%,100%{transform:translate(0,0) rotate(-10deg)}50%{transform:translate(34px,28px) rotate(18deg)}}
-@keyframes hero-arrive{from{opacity:0;translate:0 22px}to{opacity:1;translate:0 0}}
-@keyframes connection-flow{to{stroke-dashoffset:-156}}
-@keyframes case-float{0%,100%{translate:0 0;rotate:-2deg}50%{translate:2px -11px;rotate:3deg}}
-@keyframes photo-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
-@keyframes piece-drift{0%,100%{translate:0 0;rotate:0deg}35%{translate:3px -14px;rotate:3deg}70%{translate:-3px -7px;rotate:-1deg}}
+@keyframes ambient-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(var(--tilt, -10deg));
+  }
+  50% {
+    transform: translate(var(--sway-x, 34px), var(--sway-y, -44px))
+      rotate(calc(var(--tilt, -10deg) + var(--turn, 12deg)));
+  }
+}
+@keyframes section-orbit {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(-10deg);
+  }
+  50% {
+    transform: translate(34px, 28px) rotate(18deg);
+  }
+}
+@keyframes hero-arrive {
+  from {
+    opacity: 0;
+    translate: 0 22px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes connection-flow {
+  to {
+    stroke-dashoffset: -156;
+  }
+}
+@keyframes case-float {
+  0%,
+  100% {
+    translate: 0 0;
+    rotate: -2deg;
+  }
+  50% {
+    translate: 2px -11px;
+    rotate: 3deg;
+  }
+}
+@keyframes photo-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.035);
+  }
+}
+@keyframes piece-drift {
+  0%,
+  100% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  35% {
+    translate: 3px -14px;
+    rotate: 3deg;
+  }
+  70% {
+    translate: -3px -7px;
+    rotate: -1deg;
+  }
+}
 
-@media (max-width:1150px){
-  #app .landing .uses-layout{grid-template-columns:1fr;gap:26px}
-  #app .landing .uses-heading{display:grid;grid-template-columns:1fr auto;gap:18px 28px;padding:0}
-  #app .landing .uses-heading>p{max-width:550px;grid-column:1}
-  #app .landing .uses-heading .carousel-navigation{grid-column:2;grid-row:1/span 2;align-self:end;margin:0}
-  #app .landing .pricing-layout{grid-template-columns:1fr;gap:36px}
-  #app .landing .pricing-heading{display:grid;grid-template-columns:1fr 1fr;gap:12px 38px;align-items:end}
-  #app .landing .pricing-heading>.eyebrow{grid-column:1/-1}
-  #app .landing .pricing-heading h2{grid-row:2/span 2;margin:0}
-  #app .landing .pricing-heading>p{max-width:none;margin:0}
-  #app .landing .pricing-heading .pricing-note{margin:0;padding-top:14px;max-width:none}
+@media (max-width: 1150px) {
+  #app .landing .uses-layout {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+  #app .landing .uses-heading {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 18px 28px;
+    padding: 0;
+  }
+  #app .landing .uses-heading > p {
+    max-width: 550px;
+    grid-column: 1;
+  }
+  #app .landing .uses-heading .carousel-navigation {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: end;
+    margin: 0;
+  }
+  #app .landing .pricing-layout {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  #app .landing .pricing-heading {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 38px;
+    align-items: end;
+  }
+  #app .landing .pricing-heading > .eyebrow {
+    grid-column: 1/-1;
+  }
+  #app .landing .pricing-heading h2 {
+    grid-row: 2 / span 2;
+    margin: 0;
+  }
+  #app .landing .pricing-heading > p {
+    max-width: none;
+    margin: 0;
+  }
+  #app .landing .pricing-heading .pricing-note {
+    margin: 0;
+    padding-top: 14px;
+    max-width: none;
+  }
 }
-@media (max-width:950px){
-  #app .landing .tailored-bento{grid-template-columns:1fr;gap:21px}
-  #app .landing .tailored-heading{padding:0 0 10px}
-  #app .landing .tailored-heading h2{font-size:40px}
-  #app .landing .tailored-heading>p{max-width:570px}
+@media (max-width: 950px) {
+  #app .landing .tailored-bento {
+    grid-template-columns: 1fr;
+    gap: 21px;
+  }
+  #app .landing .tailored-heading {
+    padding: 0 0 10px;
+  }
+  #app .landing .tailored-heading h2 {
+    font-size: 40px;
+  }
+  #app .landing .tailored-heading > p {
+    max-width: 570px;
+  }
 }
-@media (max-width:850px){
-  #app .landing .use-slide{grid-template-columns:1fr}
-  #app .landing .use-slide-art{padding:18px 30px 80px}
-  #app .landing .use-slide-copy{padding:32px}
+@media (max-width: 850px) {
+  #app .landing .use-slide {
+    grid-template-columns: 1fr;
+  }
+  #app .landing .use-slide-art {
+    padding: 18px 30px 80px;
+  }
+  #app .landing .use-slide-copy {
+    padding: 32px;
+  }
 }
-@media (max-width:680px){
-  #app .landing .landing-motion-row>button{right:14px;bottom:14px;max-width:calc(100vw - 28px);padding:10px 13px;font-size:.875rem}
-  .ambient-mint{width:105px;height:105px;left:-78px;top:14%;border-radius:25px;--sway-x:28px;--sway-y:40px}
-  .ambient-violet{width:70px;height:155px;right:-43px;top:35%;--sway-x:-16px}
-  .ambient-coral{width:70px;height:70px;right:-25px;bottom:8%;border-radius:19px;--sway-x:-20px;--sway-y:-35px}
-  .ambient-blue-ring{width:140px;height:140px;bottom:-98px;left:4%;--sway-y:-25px}
-  .ambient-sun{width:120px;height:120px;right:-100px;border-width:15px}
-  .ambient-grid{width:160px;height:160px;left:-114px;opacity:.45}
-  #app .landing .uses-heading{gap:16px}
-  #app .landing .uses-heading h2{font-size:34px}
-  #app .landing .uses-heading>p{grid-column:1/-1}
-  #app .landing .uses-heading .carousel-navigation{grid-row:1;align-self:center}
-  #app .landing .use-slide-copy{padding:28px 24px}
-  #app .landing .use-slide h3{font-size:32px}
-  #app .landing .use-slide-art{padding:14px 20px 80px}
-  #app .landing .case-app{padding:21px}
-  #app .landing .tailored-heading h2{font-size:36px}
-  #app .landing .tailored-bento article{padding:28px 24px;border-radius:20px}
-  #app .landing .parameter-pieces>span{width:95px;min-height:100px}
-  #app .landing .pricing-heading{display:flex;flex-direction:column;align-items:start;gap:18px}
-  #app .landing .pricing-heading h2{font-size:36px}
-  #app .landing .pricing-heading .pricing-note{padding-top:20px;margin-top:3px}
-  #app .landing .plans{grid-template-columns:1fr;gap:23px}
-  #app .landing .plan{padding:29px 24px}
-  #app .landing .plan:first-child{grid-template-columns:1fr;gap:12px}
-  #app .landing .plan:first-child ul{grid-column:auto;grid-row:auto;margin-top:10px}
-  #app .landing .plan:first-child>:is(.plan-name,h3,p){grid-column:auto}
-  .landing .world-section:before{width:230px;height:230px}
-  .landing .world-section:after{width:75px;height:75px;right:-30px}
+@media (max-width: 680px) {
+  #app .landing .landing-motion-row > button {
+    right: 14px;
+    bottom: 14px;
+    max-width: calc(100vw - 28px);
+    padding: 10px 13px;
+    font-size: 0.875rem;
+  }
+  .ambient-mint {
+    width: 105px;
+    height: 105px;
+    left: -78px;
+    top: 14%;
+    border-radius: 25px;
+    --sway-x: 28px;
+    --sway-y: 40px;
+  }
+  .ambient-violet {
+    width: 70px;
+    height: 155px;
+    right: -43px;
+    top: 35%;
+    --sway-x: -16px;
+  }
+  .ambient-coral {
+    width: 70px;
+    height: 70px;
+    right: -25px;
+    bottom: 8%;
+    border-radius: 19px;
+    --sway-x: -20px;
+    --sway-y: -35px;
+  }
+  .ambient-blue-ring {
+    width: 140px;
+    height: 140px;
+    bottom: -98px;
+    left: 4%;
+    --sway-y: -25px;
+  }
+  .ambient-sun {
+    width: 120px;
+    height: 120px;
+    right: -100px;
+    border-width: 15px;
+  }
+  .ambient-grid {
+    width: 160px;
+    height: 160px;
+    left: -114px;
+    opacity: 0.45;
+  }
+  #app .landing .uses-heading {
+    gap: 16px;
+  }
+  #app .landing .uses-heading h2 {
+    font-size: 34px;
+  }
+  #app .landing .uses-heading > p {
+    grid-column: 1/-1;
+  }
+  #app .landing .uses-heading .carousel-navigation {
+    grid-row: 1;
+    align-self: center;
+  }
+  #app .landing .use-slide-copy {
+    padding: 28px 24px;
+  }
+  #app .landing .use-slide h3 {
+    font-size: 32px;
+  }
+  #app .landing .use-slide-art {
+    padding: 14px 20px 80px;
+  }
+  #app .landing .case-app {
+    padding: 21px;
+  }
+  #app .landing .tailored-heading h2 {
+    font-size: 36px;
+  }
+  #app .landing .tailored-bento article {
+    padding: 28px 24px;
+    border-radius: 20px;
+  }
+  #app .landing .parameter-pieces > span {
+    width: 95px;
+    min-height: 100px;
+  }
+  #app .landing .pricing-heading {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 18px;
+  }
+  #app .landing .pricing-heading h2 {
+    font-size: 36px;
+  }
+  #app .landing .pricing-heading .pricing-note {
+    padding-top: 20px;
+    margin-top: 3px;
+  }
+  #app .landing .plans {
+    grid-template-columns: 1fr;
+    gap: 23px;
+  }
+  #app .landing .plan {
+    padding: 29px 24px;
+  }
+  #app .landing .plan:first-child {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  #app .landing .plan:first-child ul {
+    grid-column: auto;
+    grid-row: auto;
+    margin-top: 10px;
+  }
+  #app .landing .plan:first-child > :is(.plan-name, h3, p) {
+    grid-column: auto;
+  }
+  .landing .world-section:before {
+    width: 230px;
+    height: 230px;
+  }
+  .landing .world-section:after {
+    width: 75px;
+    height: 75px;
+    right: -30px;
+  }
 }
 
 /* Every loop shares the page pause and stops when its section leaves view. */
-#app .landing[data-motion-paused="true"] .reveal-ready{opacity:1!important;translate:0 0!important;transition:none!important}
-#app .landing[data-motion-paused="true"] :is(.category-tree-children>b,.btn,.text-link>.icon,.hero-preview-use>.icon,.bento-icon){translate:0 0!important;rotate:0deg!important;scale:1!important;transition:none!important}
-@media (prefers-reduced-motion:reduce){
-  #app .landing *,#app .landing:before,#app .landing:after,#app .landing *:before,#app .landing *:after{animation:none!important}
-  #app .landing .reveal-ready{opacity:1!important;translate:0 0!important;transition:none!important}
-  :is(#app,#modal) :is(.category-tree-children>b,.btn,.text-link>.icon,.hero-preview-use>.icon,.bento-icon,.palette-icon,.banner-icon,.selected-block-icon){translate:0 0!important;rotate:0deg!important;scale:1!important;transition:none!important}
-  ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation-duration:1ms!important}
+#app .landing[data-motion-paused='true'] .reveal-ready {
+  opacity: 1 !important;
+  translate: 0 0 !important;
+  transition: none !important;
+}
+#app
+  .landing[data-motion-paused='true']
+  :is(
+    .category-tree-children > b,
+    .btn,
+    .text-link > .icon,
+    .hero-preview-use > .icon,
+    .bento-icon
+  ) {
+  translate: 0 0 !important;
+  rotate: 0deg !important;
+  scale: 1 !important;
+  transition: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  #app .landing *,
+  #app .landing:before,
+  #app .landing:after,
+  #app .landing *:before,
+  #app .landing *:after {
+    animation: none !important;
+  }
+  #app .landing .reveal-ready {
+    opacity: 1 !important;
+    translate: 0 0 !important;
+    transition: none !important;
+  }
+  :is(#app, #modal)
+    :is(
+      .category-tree-children > b,
+      .btn,
+      .text-link > .icon,
+      .hero-preview-use > .icon,
+      .bento-icon,
+      .palette-icon,
+      .banner-icon,
+      .selected-block-icon
+    ) {
+    translate: 0 0 !important;
+    rotate: 0deg !important;
+    scale: 1 !important;
+    transition: none !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 1ms !important;
+  }
 }

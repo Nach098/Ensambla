@@ -1,3 +1,4 @@
+# Mantiene codificación e indentación coherentes entre editores.
 root = true
 
 [*]
