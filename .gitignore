@@ -1,3 +1,15 @@
 node_modules/
-*.zip
+backend/dist/
+coverage/
+*.log
+.env
+.env.*
+!.env.example
+!.env.production.example
+*.tsbuildinfo
 .DS_Store
+Thumbs.db
+.idea/
+.vscode/
+backups/
+data/

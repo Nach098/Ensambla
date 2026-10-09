@@ -1,0 +1,22 @@
+name: ensambla-production
+x-app: &app
+  image: ${ENSAMBLA_IMAGE:?Definir ENSAMBLA_IMAGE con la versión del despliegue}
+  environment:
+    NODE_ENV: production
+    HOST: 0.0.0.0
+    PORT: 3000
+    DATABASE_URL: ${DATABASE_URL:?Definir DATABASE_URL de producción}
+    TRUST_PROXY: "true"
+services:
+  migrate:
+    <<: *app
+    command: ["node", "backend/dist/database/cli.js"]
+    healthcheck:
+      disable: true
+  app:
+    <<: *app
+    init: true
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${APP_PORT:-3000}:3000"
+    stop_grace_period: 15s

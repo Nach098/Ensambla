@@ -1,1 +1,17 @@
-{"name":"ensambla","version":"0.2.6","private":true,"type":"module","scripts":{"test":"node --test tests/*.test.js","check":"node --check dist/app.js"}}
+{
+  "name": "ensambla",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "workspaces": ["backend", "frontend"],
+  "engines": { "node": ">=24 <25" },
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env --import tsx --watch backend/src/server.ts",
+    "build": "npm run build --workspace @ensambla/backend",
+    "start": "node --env-file-if-exists=.env backend/dist/server.js",
+    "check": "npm run check --workspaces",
+    "test": "npm run test --workspaces",
+    "db:migrate": "node --env-file-if-exists=.env --import tsx backend/src/database/cli.ts",
+    "db:migrate:production": "node --env-file-if-exists=.env backend/dist/database/cli.js"
+  }
+}

@@ -1,0 +1,57 @@
+name: Verificar Ensambla
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: ensambla
+          POSTGRES_PASSWORD: ci_only_password
+          POSTGRES_DB: ensambla
+        ports: ["5433:5432"]
+        options: >-
+          --health-cmd "pg_isready -U ensambla -d ensambla"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://ensambla:ci_only_password@localhost:5433/ensambla
+      TEST_DATABASE_URL: postgresql://ensambla:ci_only_password@localhost:5433/ensambla
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm test
+      - run: npm run build
+      - run: npm run db:migrate:production
+      - run: npm run db:migrate:production
+      - run: docker compose config --quiet
+      - run: docker compose build app
+      - name: Verificar imagen con PostgreSQL y HTTP reales
+        run: |
+          docker compose up -d --no-build
+          node --input-type=module <<'JS'
+          let ready = false;
+          for (let attempt = 0; attempt < 40; attempt++) {
+            try { ready = (await fetch('http://localhost:3000/api/health/ready')).ok; } catch {}
+            if (ready) break;
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+          if (!ready) throw new Error('La imagen no está lista');
+          if (!(await fetch('http://localhost:3000/')).ok) throw new Error('La interfaz no responde');
+          JS
+      - if: always()
+        run: docker compose logs --no-color && docker compose down
