@@ -1,0 +1,1 @@
+{"name":"Ensambla","short_name":"Ensambla","description":"Tu sistema, un bloque a la vez.","start_url":"./#/espacio","scope":"./","display":"standalone","background_color":"#FFF8F1","theme_color":"#263443","icons":[{"src":"./assets/ensambla.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]}
